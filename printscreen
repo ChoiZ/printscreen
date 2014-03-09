@@ -1,0 +1,38 @@
+#!/bin/bash
+# Last modified: 2014-03-09
+# Author: François LASSERRE <choiz@me.com>
+# License: GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+# Version: 0.1
+
+# Require: scp, scrot, xclip
+
+randk(){< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-10};echo;}
+
+# local folder
+dir="Printscreen"
+
+# screenshot filename
+file=`hostname``randk`.png
+
+# scp destination
+scp_dest="user@host:/wwwpath/"
+
+# final url
+url="http://host/"
+
+cd $HOME
+
+if [[ ! -e $dir ]]; then
+    echo "Create Printscreen folder."
+    mkdir $dir
+fi
+
+scrot $dir/$file
+scp $dir/$file $scp_dest
+
+if [ $? -eq 0 ]; then
+    echo Printscreen uploaded on: $url$file
+    echo "$url$file" | xclip -selection clipboard
+else
+    echo "Error uploading file $file";
+fi
